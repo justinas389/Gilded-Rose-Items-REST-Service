@@ -41,7 +41,17 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $item = $request->isMethod('put') ? Item::findOrFail
+        ($request->item_id) : new Item;
+
+        $item->id = $request->input('item_id');
+        $item->title = $request->input('title');
+        $item->quality = $request->input('quality');
+        $item->sell_in = $request->input('sell_in');
+
+        if($item->save()) {
+          return new ItemResource($item);
+        }
     }
 
     /**
@@ -52,7 +62,11 @@ class ItemController extends Controller
      */
     public function show($id)
     {
-        //
+        // Get item
+        $item = Item::findOrFail($id);
+
+        // Return single article as a resourcebundle_count
+        return new ItemResource($item);
     }
 
     /**
@@ -86,6 +100,11 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        //
+      // Get item
+      $item = Item::findOrFail($id);
+
+      if($item->delete()) {
+        return new ItemResource($item);
+      }
     }
 }
